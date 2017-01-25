@@ -17,4 +17,5 @@ executable satchsalvage
                        io-streams,
                        unix,
                        filepath,
-                       text
+                       text,
+                       pandoc

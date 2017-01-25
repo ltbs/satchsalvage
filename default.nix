@@ -4,8 +4,8 @@ let
 
   inherit (nixpkgs) pkgs;
 
-  f = { mkDerivation, base, bytestring, io-streams, mysql-simple
-      , optparse-applicative, stdenv
+  f = { mkDerivation, base, bytestring, filepath, io-streams
+      , mysql-simple, optparse-applicative, pandoc, stdenv, text, unix
       }:
       mkDerivation {
         pname = "satchsalvage";
@@ -14,7 +14,8 @@ let
         isLibrary = false;
         isExecutable = true;
         executableHaskellDepends = [
-          base bytestring io-streams mysql-simple optparse-applicative
+          base bytestring filepath io-streams mysql-simple
+          optparse-applicative pandoc text unix
         ];
         license = stdenv.lib.licenses.gpl3;
       };

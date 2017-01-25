@@ -3,6 +3,7 @@
 module SatchSalvage.Extract where
 
 import SatchSalvage.Data
+import SatchSalvage.Convert
 
 import Database.MySQL.Simple
 import qualified Data.Text as Text
@@ -74,7 +75,7 @@ getProductImagePaths c p = query c sql (Only (prodId p))  >>= return.fmap fromOn
 copyImages :: FilePath -> Connection -> Product -> IO ()
 copyImages staticDir c p = do
   images <- getProductImagePaths c p
-  mapM_ (\i -> createLink (staticDir ++ i) (destPath i)) images
+  mapM_ (\i -> createLink (staticDir ++ "/" ++ i) (destPath i)) images
   where destPath x = productDir p ++ sku p ++ "/" ++
           (stripStart "productimage-picture-" .takeFileName) x        
 
@@ -82,7 +83,7 @@ makeProductFs :: Product -> IO ()
 makeProductFs p = do
   createDirectory (productDir p ++ sku p) ownerModes
   createSymbolicLink (sku p) (productDir p ++ slug p)
-  writeFile (productDir p ++ sku p ++ "/desc.html") (desc p)
+  _ <- htmlToMdIO (desc p) >>= writeFile (productDir p ++ sku p ++ "/desc-en_GB.md")
   writeFile (productDir p ++ sku p ++ "/prices") priceData  
   writeFile (productDir p ++ sku p ++ "/" ++ slug p ++ ".product") metadata
   where metadata = unlines $ [
